@@ -24,7 +24,8 @@ Data records several variables for a baby at birth:
 Rows are babies, columns are variables
 
 ```{r}
-baby <- read.table("C:\\Users\\neide\\Documents\\GitHub\\ma189\\Data\\babies.dat",header=TRUE)
+filepath = file.path(getwd(), "..\\Data\\babies.dat")
+baby <- read.table(filepath,header=TRUE)
 head(baby[,c(1,2)])
 ```
 

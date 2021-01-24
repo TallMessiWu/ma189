@@ -1,6 +1,8 @@
 ---
-title: "Math 189: Exploratory Data Analysis I"
-output: html_notebook
+title: 'Math 189: Exploratory Data Analysis I'
+output:
+  pdf_document: default
+  html_notebook: default
 ---
  
 # Challenges in Multivariate Data Analysis
@@ -67,7 +69,9 @@ Used to check the relationship between two variables:
 5. Vitamin C (mg)
 
 ```{r}
-nutrient <- read.table("C:\\Users\\neide\\Documents\\GitHub\\ma189\\Data\\nutrient.txt")
+filepath = getwd()
+filepath = file.path(filepath, "..\\Data\\nutrient.txt")
+nutrient <- read.table(filepath)
 nutrient$V1=NULL
 colnames(nutrient)=c("Calcium", "Iron", "Protein", "Vitamin A", "Vitamin C")
 dim(nutrient)
@@ -257,7 +261,9 @@ A time plot (sometimes called a *time series graph*) displays values versus time
 4. Daily stock price of Microsoft
 
 ```{r}
-stock <- read.table("C:\\Users\\neide\\Documents\\GitHub\\ma189\\Data\\Stock.csv", 
+filepath = getwd()
+filepath = file.path(filepath, "..//Data//Stock.csv")
+stock <- read.table(filepath, 
                     sep = ",", header=TRUE)
 head(stock)
 ```

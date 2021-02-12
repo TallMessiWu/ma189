@@ -30,7 +30,7 @@ observation $\underline{x}$ that is to be classified into one of the $g$ populat
 5. Calculate coefficients
 \[
   \widehat{\underline{\beta}}_k  =    {\mathbf S}^{-1} \, 
-   {  \overline{\underline{x}}^{(k)} }^{\prime}
+   {  \overline{\underline{x}}^{(k)} }
 \]
 6. Calculate
 \[
@@ -94,9 +94,9 @@ S_pooled
  
 ```{r}
 S_inv <- solve(S_pooled)
-alpha_setosa <- -0.5* t(Mean_setosa) %*% S_inv %*% Mean_setosa
-alpha_versicolor <- -0.5* t(Mean_versicolor) %*% S_inv %*% Mean_versicolor
-alpha_virginica <- -0.5* t(Mean_virginica) %*% S_inv %*% Mean_virginica
+alpha_setosa <- -0.5* t(Mean_setosa) %*% S_inv %*% Mean_setosa + log(p_setosa)
+alpha_versicolor <- -0.5* t(Mean_versicolor) %*% S_inv %*% Mean_versicolor + log(p_versicolor)
+alpha_virginica <- -0.5* t(Mean_virginica) %*% S_inv %*% Mean_virginica + log(p_virginica)
 alpha_iris <- c(alpha_setosa,alpha_versicolor,alpha_virginica)
 alpha_iris
 ```
@@ -114,6 +114,9 @@ beta_iris
 ### Example: LDA on Iris Dataset 
 
 - We calculate the LD function values for each observation in the test dataset. The results are presented in the following 3D scatter plot.
+- For each of the $30$ test records $\underline{x}$, we can plot $\widehat{d}_k^L (\underline{x})$ for $k = 1, 2, 3$. These are plotted on axes for setosa ($k=1$), versicolor ($k=2$), and virginica ($k=3$).
+- In the second scatterplot, we color the records according to their true species: red square for setosa, blue triangle for versicolor, and black dot for virginica. Observe the clustering of discriminant values.
+
 
 ```{r}
 prediction <- c()
@@ -156,15 +159,21 @@ scatterplot3d(x = d_setosa_vec, y = d_versicolor_vec, z = d_virginica_vec,
               color=col_vec, pch=pch_vec, angle = 55 , cex.symbols=2, cex.lab=2)
 ```
 
-
-
-- The classification results versus truth are given in the following table.
+- The classification results versus truth are given in the following output:
 
 ```{r}
 setosa_true <- sum((iris.test$Species == "setosa") & (iris.test$prediction == "setosa"))
 versicolor_true <- sum((iris.test$Species == "versicolor") & (iris.test$prediction == "versicolor"))
 virginica_true <- sum((iris.test$Species == "virginica") & (iris.test$prediction == "virginica"))
-class_tab <- c(n_setosa,n_versicolor,n_virginica)
+iris.test
+```
+
+- The table summarizes the results.
+
+```{r}
+class_tab <- c(dim(iris.setosa)[1]-n_setosa,
+               dim(iris.versi)[1]-n_versicolor,
+               dim(iris.virgi)[1]-n_virginica)
 class_tab <- rbind(class_tab,
        c(setosa_true,versicolor_true,virginica_true))
 class_tab <- rbind(class_tab,class_tab[1,] - class_tab[2,])
@@ -197,7 +206,7 @@ class_tab
   {( \underline{\mu}_1 - \underline{\mu}_2 )}^{\prime} {\mathbf \Sigma}^{-1} \underline{x}.
 \]
 
-- Letting $\frac{1}{2} \left( \underline{\mu}_1^{\prime} {\mathbf \Sigma}^{-1} \underline{\mu}_1  - \underline{\mu}_2^{\prime} {\mathbf \Sigma}^{-1} \underline{\mu}_2 \right) - \log (p_1 /p_2)$ and $\underline{\omega} = {\mathbf \Sigma}^{-1} {( \underline{\mu}_1 - \underline{\mu}_2 )}$,
+- Letting $c = \frac{1}{2} \left( \underline{\mu}_1^{\prime} {\mathbf \Sigma}^{-1} \underline{\mu}_1  - \underline{\mu}_2^{\prime} {\mathbf \Sigma}^{-1} \underline{\mu}_2 \right) - \log (p_1 /p_2)$ and $\underline{\omega} = {\mathbf \Sigma}^{-1} {( \underline{\mu}_1 - \underline{\mu}_2 )}$,
  the inequality above says that
 \[
  \underline{\omega}^{\prime} \underline{x} > c.

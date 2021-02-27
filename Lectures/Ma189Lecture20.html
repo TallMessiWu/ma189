@@ -383,7 +383,7 @@ summary {
 <li>Because <span class="math display">\[
  \mbox{Var} [ y_j] = \underline{e}_j^{\prime} {\mathbf \Sigma} \underline{e}_j
   = \lambda_j \underline{e}_j^{\prime} \underline{e}_j = \lambda_j,
-\]</span> we see that <span class="math inline">\(\mbox{Var} [ y_1] \geq \mbox{Var} [ y_2] \geq  \ldots \geq \mbox{Var} [ y_1]\)</span>.</li>
+\]</span> we see that <span class="math inline">\(\mbox{Var} [ y_1] \geq \mbox{Var} [ y_2] \geq  \ldots \geq \mbox{Var} [ y_p]\)</span>.</li>
 <li>Also for <span class="math inline">\(j \neq k\)</span> <span class="math display">\[
  \mbox{Cov} [ y_j, y_k] = \underline{e}_j^{\prime} {\mathbf \Sigma} \underline{e}_k
   = \lambda_k \underline{e}_j^{\prime} \underline{e}_k = 0
@@ -419,11 +419,11 @@ summary {
 <li>The total variation of <span class="math inline">\(\underline{X}\)</span> is the trace of its covariance matrix <span class="math inline">\({\mathbf \Sigma}\)</span>. This is also the sum of all the eigenvalues: <span class="math display">\[
  \mbox{tr} {\bf \Sigma} = \sum_{j=1}^p \lambda_j.
 \]</span></li>
-<li>The proportion of variation explained by the <span class="math inline">\(j\)</span>th principal component is <span class="math display">\[
-\frac{ \lambda_j}{ \sum_{k=1}^p \lambda_k}
+<li>The proportion of variation explained by the <span class="math inline">\(k\)</span>th principal component is <span class="math display">\[
+\frac{ \lambda_k}{ \sum_{j=1}^p \lambda_j}
 \]</span></li>
-<li>The proportion of variation explained by the first <span class="math inline">\(j\)</span> principal components is <span class="math display">\[
-\frac{ \sum_{k=1}^j \lambda_k}{ \sum_{k=1}^p \lambda_k}.
+<li>The proportion of variation explained by the first <span class="math inline">\(k\)</span> principal components is <span class="math display">\[
+\frac{ \sum_{j=1}^k \lambda_j}{ \sum_{j=1}^p \lambda_j}.
 \]</span></li>
 <li>Naturally, if the proportion of variation explained by the first <span class="math inline">\(k\)</span> principal components is large, then not much information is lost by considering only the first <span class="math inline">\(k\)</span> principal components.</li>
 </ul>
@@ -437,7 +437,7 @@ summary {
 <ol style="list-style-type: decimal">
 <li>To obtain the simplest possible interpretation, we want <span class="math inline">\(k\)</span> to be as small as possible. If we can explain most of the variation by just looking at the first few principal components, then it would give us a simpler description of the data.</li>
 <li>To reduce loss of information, we want the proportion of variation explained by the first <span class="math inline">\(k\)</span> principal components to be large (ideally close to 1): <span class="math display">\[
-  \frac{ \sum_{k=1}^j \lambda_k}{ \sum_{k=1}^p \lambda_k} \approx 1
+  \frac{ \sum_{j=1}^k \lambda_j}{ \sum_{j=1}^p \lambda_j} \approx 1
 \]</span></li>
 </ol>
 </div>
@@ -455,8 +455,8 @@ summary {
   \]</span></li>
 <li>Calculate eigenvalues and eigenvectors of <span class="math inline">\({\mathbf S}\)</span>. Let <span class="math inline">\(\hat{\lambda}_1, \ldots, \hat{\lambda}_p\)</span> denote the eigenvalues of <span class="math inline">\({\mathbf S}\)</span> in descending order, and let <span class="math inline">\(\hat{\underline{e}}_1, \ldots, \hat{\underline{e}}_p\)</span> be the corresponding eigenvectors.</li>
 <li>The estimated principal components are <span class="math display">\[
-  \hat{y}_{i1} = \hat{\underline{e}}_1 \underline{x}_i,
-  \ldots,  \hat{y}_{ip} = \hat{\underline{e}}_p \underline{x}_i.
+  \hat{y}_{i1} = \hat{\underline{e}}_1^{\prime} \underline{x}_i,
+  \ldots,  \hat{y}_{ip} = \hat{\underline{e}}_p^{\prime} \underline{x}_i.
 \]</span></li>
 </ol>
 </div>
@@ -514,7 +514,41 @@ out2</code></pre>
 ## PC3  0.3565632 0.08914080  0.9566425
 ## PC4  0.1734301 0.04335752  1.0000000</code></pre>
 <ul>
-<li>Fancy with a package:</li>
+<li>We can get the transformed data as well!</li>
+</ul>
+<pre class="r"><code>z &lt;- (t(USArrests) - out1[1,])/sqrt(out1[2,])
+e_mat &lt;- pca_result$vectors
+y &lt;- t(e_mat) %*% z
+y[1:2,]</code></pre>
+<pre><code>##         Alabama    Alaska    Arizona  Arkansas California   Colorado
+## [1,] -0.9756604 -1.930538 -1.7454429 0.1399989  -2.498613 -1.4993407
+## [2,]  1.1220012  1.062427 -0.7384595 1.1085423  -1.527427 -0.9776297
+##      Connecticut    Delaware     Florida   Georgia     Hawaii     Idaho
+## [1,]    1.344992 -0.04722981 -2.98275967 -1.622807  0.9034845 1.6233190
+## [2,]   -1.077984 -0.32208890  0.03883425  1.266088 -1.5546761 0.2088525
+##        Illinois    Indiana       Iowa     Kansas  Kentucky  Louisiana     Maine
+## [1,] -1.3650520  0.5003812  2.2309958  0.7888721 0.7433126 -1.5490908 2.3727401
+## [2,] -0.6749883 -0.1500393 -0.1030083 -0.2674494 0.9488075  0.8623001 0.3726087
+##       Maryland Massachusetts  Michigan  Minnesota Mississippi   Missouri
+## [1,] -1.745647     0.4812801 -2.087250  1.6756695  -0.9864792 -0.6897843
+## [2,]  0.423357    -1.4596771 -0.153835 -0.6259067   2.3697371 -0.2607079
+##        Montana   Nebraska    Nevada New Hampshire New Jersey New Mexico
+## [1,] 1.1735375  1.2529163 -2.845505    2.35995585 -0.1797413 -1.9601235
+## [2,] 0.5314785 -0.1920044 -0.767805   -0.01790055 -1.4349374  0.1414131
+##        New York North Carolina North Dakota       Ohio   Oklahoma      Oregon
+## [1,] -1.6656666      -1.112088    2.9621522  0.2236944  0.3086493 -0.05852787
+## [2,] -0.8149107       2.205611    0.5930974 -0.7347784 -0.2849611 -0.53596999
+##      Pennsylvania Rhode Island South Carolina South Dakota  Tennessee
+## [1,]    0.8794868    0.8550907      -1.307450    1.9677967 -0.9896938
+## [2,]   -0.5653605   -1.4769833       1.913973    0.8150682  0.8516053
+##           Texas       Utah  Vermont  Virginia Washington West Virginia
+## [1,] -1.3415184  0.5450318 2.773256 0.0953667  0.2147234      2.087393
+## [2,] -0.4083352 -1.4567152 1.388194 0.1977278 -0.9603739      1.410526
+##       Wisconsin   Wyoming
+## [1,]  2.0588120 0.6231006
+## [2,] -0.6051251 0.3177866</code></pre>
+<ul>
+<li>Fancy with <em>prcomp</em>:</li>
 </ul>
 <pre class="r"><code>#&quot;scale=True&quot; means the data are standardized first
 pca_result &lt;- prcomp(USArrests, scale = TRUE)
@@ -629,7 +663,7 @@ out3</code></pre>
 ## PC4  0.99492173 -0.03893830  0.05816914 -0.07232502</code></pre>
 <ul>
 <li>The first principal component vector highly weights Assault, since this variable has the highest variance.</li>
-<li>The second principal component loading vector places almost all of its weight on UrpanPop. - - So we see that scaling does indeed have a substantial effect on the results.</li>
+<li>The second principal component loading vector places almost all of its weight on UrpanPop. - So we see that scaling does indeed have a substantial effect on the results.</li>
 </ul>
 </div>
 </div>
